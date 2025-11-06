@@ -4,7 +4,7 @@ import 'package:boardview/board_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-typedef void OnDropList(int? listIndex,int? oldListIndex);
+typedef void OnDropList(int? listIndex, int? oldListIndex);
 typedef void OnTapList(int? listIndex);
 typedef void OnStartDragList(int? listIndex);
 
@@ -29,7 +29,10 @@ class BoardList extends StatefulWidget {
     this.headerBackgroundColor,
     this.boardView,
     this.draggable = true,
-    this.index, this.onDropList, this.onTapList, this.onStartDragList,
+    this.index,
+    this.onDropList,
+    this.onTapList,
+    this.onStartDragList,
   }) : super(key: key);
 
   final int? index;
@@ -40,26 +43,25 @@ class BoardList extends StatefulWidget {
   }
 }
 
-class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin{
+class BoardListState extends State<BoardList>
+    with AutomaticKeepAliveClientMixin {
   List<BoardItemState> itemStates = [];
   ScrollController boardListController = ScrollController();
   late BoardListController listController;
 
   void onDropList(int? listIndex) {
-    if(widget.onDropList != null){
-      widget.onDropList!(listIndex,widget.boardView!.startListIndex);
+    if (widget.onDropList != null) {
+      widget.onDropList!(listIndex, widget.boardView!.startListIndex);
     }
     widget.boardView!.draggedListIndex = null;
-    if(widget.boardView!.mounted) {
-      widget.boardView!.setState(() {
-
-      });
+    if (widget.boardView!.mounted) {
+      widget.boardView!.setState(() {});
     }
   }
 
   void _startDrag(Widget item, BuildContext context) {
     if (widget.boardView != null && widget.draggable) {
-      if(widget.onStartDragList != null){
+      if (widget.onStartDragList != null) {
         widget.onStartDragList!(widget.index);
       }
       widget.boardView!.startListIndex = widget.index;
@@ -69,7 +71,7 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
       widget.boardView!.draggedItem = item;
       widget.boardView!.onDropList = onDropList;
       widget.boardView!.run();
-      if(widget.boardView!.mounted) {
+      if (widget.boardView!.mounted) {
         widget.boardView!.setState(() {});
       }
     }
@@ -81,7 +83,7 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
     listController = BoardListController();
     listController.attachScrollController(boardListController);
   }
-  
+
   @override
   void dispose() {
     listController.dispose();
@@ -94,20 +96,18 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     List<Widget> listWidgets = [];
     if (widget.header != null) {
-      Color? headerBackgroundColor = Color.fromARGB(255, 255, 255, 255);
-      if (widget.headerBackgroundColor != null) {
-        headerBackgroundColor = widget.headerBackgroundColor;
-      }
+      if (widget.headerBackgroundColor != null) {}
       listWidgets.add(GestureDetector(
-          onTap: (){
-            if(widget.onTapList != null){
+          onTap: () {
+            if (widget.onTapList != null) {
               widget.onTapList!(widget.index);
             }
           },
           onTapDown: (otd) {
-            if(widget.draggable) {
+            if (widget.draggable) {
               RenderBox object = context.findRenderObject() as RenderBox;
               Offset pos = object.localToGlobal(Offset.zero);
               widget.boardView!.initialX = pos.dx;
@@ -119,7 +119,7 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
           },
           onTapCancel: () {},
           onLongPress: () {
-            if(!widget.boardView!.widget.isSelecting && widget.draggable) {
+            if (!widget.boardView!.widget.isSelecting && widget.draggable) {
               _startDrag(widget, context);
             }
           },
@@ -130,7 +130,6 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: widget.header!),
           )));
-
     }
     if (widget.items != null) {
       listWidgets.add(Container(
@@ -144,7 +143,8 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
                 itemBuilder: (ctx, index) {
                   if (widget.items![index].boardList == null ||
                       widget.items![index].index != index ||
-                      widget.items![index].boardList!.widget.index != widget.index ||
+                      widget.items![index].boardList!.widget.index !=
+                          widget.index ||
                       widget.items![index].boardList != this) {
                     widget.items![index] = BoardItem(
                       boardList: this,
@@ -188,9 +188,8 @@ class BoardListState extends State<BoardList> with AutomaticKeepAliveClientMixin
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(color: backgroundColor),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: listWidgets as List<Widget>,
+          children: listWidgets,
         ));
   }
 }
