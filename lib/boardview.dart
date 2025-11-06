@@ -20,12 +20,20 @@ class BoardView extends StatefulWidget {
     this.width = 280,
     this.middleWidget,
     this.bottomPadding,
+    this.padding,
+    this.listGap = 0,
+    this.decoration,
+    this.boardPadding,
   }) : super(key: key);
 
   final List<BoardList>? lists;
   final double width;
   final Widget? middleWidget;
   final double? bottomPadding;
+  final EdgeInsetsGeometry? padding;
+  final double listGap;
+  final BoxDecoration? decoration;
+  final EdgeInsetsGeometry? boardPadding;
   final bool isSelecting;
   final bool? scrollbar;
   final ScrollbarStyle? scrollbarStyle;
@@ -471,7 +479,7 @@ class BoardViewState extends State<BoardView>
           widget.lists![index] = BoardList(
             items: widget.lists![index].items,
             headerBackgroundColor: widget.lists![index].headerBackgroundColor,
-            backgroundColor: widget.lists![index].backgroundColor,
+            decoration: widget.lists![index].decoration,
             footer: widget.lists![index].footer,
             header: widget.lists![index].header,
             boardView: this,
@@ -479,13 +487,14 @@ class BoardViewState extends State<BoardView>
             onDropList: widget.lists![index].onDropList,
             onTapList: widget.lists![index].onTapList,
             onStartDragList: widget.lists![index].onStartDragList,
+            padding: widget.lists![index].padding,
           );
         }
         if (widget.lists![index].index != index) {
           widget.lists![index] = BoardList(
             items: widget.lists![index].items,
             headerBackgroundColor: widget.lists![index].headerBackgroundColor,
-            backgroundColor: widget.lists![index].backgroundColor,
+            decoration: widget.lists![index].decoration,
             footer: widget.lists![index].footer,
             header: widget.lists![index].header,
             boardView: this,
@@ -494,24 +503,35 @@ class BoardViewState extends State<BoardView>
             onDropList: widget.lists![index].onDropList,
             onTapList: widget.lists![index].onTapList,
             onStartDragList: widget.lists![index].onStartDragList,
+            padding: widget.lists![index].padding,
           );
         }
 
         var temp = Container(
             width: widget.width,
-            padding: EdgeInsets.fromLTRB(0, 0, 0, widget.bottomPadding ?? 0),
+            padding: widget.padding ??
+                EdgeInsets.fromLTRB(0, 0, 0, widget.bottomPadding ?? 0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[Expanded(child: widget.lists![index])],
             ));
+
+        Widget itemWithGap = Row(
+          children: [
+            temp,
+            if (index < widget.lists!.length - 1)
+              SizedBox(width: widget.listGap),
+          ],
+        );
+
         if (draggedListIndex == index && draggedItemIndex == null) {
           return Opacity(
             opacity: 0.0,
-            child: temp,
+            child: itemWithGap,
           );
         } else {
-          return temp;
+          return itemWithGap;
         }
       },
     );
@@ -795,6 +815,8 @@ class BoardViewState extends State<BoardView>
     }
 
     return Container(
+        decoration: widget.decoration,
+        padding: widget.boardPadding,
         child: Listener(
             onPointerMove: (opm) {
               if (draggedItem != null) {

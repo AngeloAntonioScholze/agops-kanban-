@@ -9,23 +9,24 @@ typedef void OnTapList(int? listIndex);
 typedef void OnStartDragList(int? listIndex);
 
 class BoardList extends StatefulWidget {
-  final List<Widget>? header;
+  final Widget? header;
   final Widget? footer;
   final List<BoardItem>? items;
-  final Color? backgroundColor;
+  final BoxDecoration? decoration;
   final Color? headerBackgroundColor;
   final BoardViewState? boardView;
   final OnDropList? onDropList;
   final OnTapList? onTapList;
   final OnStartDragList? onStartDragList;
   final bool draggable;
+  final EdgeInsetsGeometry? padding;
 
   const BoardList({
     Key? key,
     this.header,
     this.items,
     this.footer,
-    this.backgroundColor,
+    this.decoration,
     this.headerBackgroundColor,
     this.boardView,
     this.draggable = true,
@@ -33,6 +34,7 @@ class BoardList extends StatefulWidget {
     this.onDropList,
     this.onTapList,
     this.onStartDragList,
+    this.padding,
   }) : super(key: key);
 
   final int? index;
@@ -98,39 +100,38 @@ class BoardListState extends State<BoardList>
   Widget build(BuildContext context) {
     super.build(context);
     List<Widget> listWidgets = [];
-    if (widget.header != null) {
-      if (widget.headerBackgroundColor != null) {}
-      listWidgets.add(GestureDetector(
-          onTap: () {
-            if (widget.onTapList != null) {
-              widget.onTapList!(widget.index);
-            }
-          },
-          onTapDown: (otd) {
-            if (widget.draggable) {
-              RenderBox object = context.findRenderObject() as RenderBox;
-              Offset pos = object.localToGlobal(Offset.zero);
-              widget.boardView!.initialX = pos.dx;
-              widget.boardView!.initialY = pos.dy;
 
-              widget.boardView!.rightListX = pos.dx + object.size.width;
-              widget.boardView!.leftListX = pos.dx;
-            }
-          },
-          onTapCancel: () {},
-          onLongPress: () {
-            if (!widget.boardView!.widget.isSelecting && widget.draggable) {
-              _startDrag(widget, context);
-            }
-          },
-          child: Container(
-            color: widget.headerBackgroundColor,
-            child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.header!),
-          )));
-    }
+    listWidgets.add(
+      widget.header != null
+          ? GestureDetector(
+              onTap: () {
+                if (widget.onTapList != null) {
+                  widget.onTapList!(widget.index);
+                }
+              },
+              onTapDown: (otd) {
+                if (widget.draggable) {
+                  RenderBox object = context.findRenderObject() as RenderBox;
+                  Offset pos = object.localToGlobal(Offset.zero);
+                  widget.boardView!.initialX = pos.dx;
+                  widget.boardView!.initialY = pos.dy;
+
+                  widget.boardView!.rightListX = pos.dx + object.size.width;
+                  widget.boardView!.leftListX = pos.dx;
+                }
+              },
+              onTapCancel: () {},
+              onLongPress: () {
+                if (!widget.boardView!.widget.isSelecting && widget.draggable) {
+                  _startDrag(widget, context);
+                }
+              },
+              child: Container(
+                color: widget.headerBackgroundColor,
+                child: widget.header,
+              ))
+          : SizedBox.shrink(),
+    );
     if (widget.items != null) {
       listWidgets.add(Container(
           child: Flexible(
@@ -174,19 +175,16 @@ class BoardListState extends State<BoardList>
       listWidgets.add(widget.footer!);
     }
 
-    Color? backgroundColor = Color.fromARGB(255, 255, 255, 255);
-
-    if (widget.backgroundColor != null) {
-      backgroundColor = widget.backgroundColor;
-    }
     if (widget.boardView!.listStates.length > widget.index!) {
       widget.boardView!.listStates.removeAt(widget.index!);
     }
     widget.boardView!.listStates.insert(widget.index!, this);
 
     return Container(
-        margin: EdgeInsets.all(8),
-        decoration: BoxDecoration(color: backgroundColor),
+        clipBehavior: Clip.antiAlias,
+        padding: widget.padding ?? EdgeInsets.zero,
+        decoration: widget.decoration ??
+            BoxDecoration(color: Color.fromARGB(255, 255, 255, 255)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: listWidgets,

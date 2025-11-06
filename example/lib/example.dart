@@ -242,11 +242,19 @@ class BoardViewExampleState extends State<BoardViewExample> {
         Expanded(
           child: Container(
             color: Colors.grey[100],
+            padding: const EdgeInsets.all(16),
             child: BoardView(
               lists: lists,
               boardController: boardController,
-              width: 300,
+              width: MediaQuery.sizeOf(context).width * 0.3,
               scrollbar: true,
+              listGap: 10,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
             ),
           ),
         ),
@@ -286,7 +294,7 @@ class BoardViewExampleState extends State<BoardViewExample> {
           (int? listIndex, int? itemIndex, BoardItemState? state) async {},
       item: Card(
         elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Text(
@@ -323,12 +331,16 @@ class BoardViewExampleState extends State<BoardViewExample> {
         setState(() {}); // Update the UI
       },
       headerBackgroundColor: Colors.blue[100],
-      backgroundColor: Colors.grey[50],
-      header: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: Text(
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey),
+      ),
+      header: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            Text(
               list.title!,
               style: TextStyle(
                 fontSize: 18,
@@ -336,9 +348,9 @@ class BoardViewExampleState extends State<BoardViewExample> {
                 color: Colors.blue[800],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
       items: items,
     );
   }
