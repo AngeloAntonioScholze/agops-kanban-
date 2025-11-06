@@ -6,7 +6,8 @@ import 'package:flutter/widgets.dart';
 typedef BoardScrollCallback = void Function(double position, double maxExtent);
 
 /// Called when a list becomes visible or hidden
-typedef BoardListVisibilityCallback = void Function(int listIndex, bool isVisible);
+typedef BoardListVisibilityCallback = void Function(
+    int listIndex, bool isVisible);
 
 /// Called when the board starts or stops scrolling
 typedef BoardScrollStateCallback = void Function(bool isScrolling);
@@ -15,34 +16,41 @@ typedef BoardScrollStateCallback = void Function(bool isScrolling);
 typedef BoardDragStartCallback = void Function(int listIndex, int itemIndex);
 
 /// Called when a drag operation ends
-typedef BoardDragEndCallback = void Function(int fromListIndex, int fromItemIndex, int toListIndex, int toItemIndex);
+typedef BoardDragEndCallback = void Function(
+    int fromListIndex, int fromItemIndex, int toListIndex, int toItemIndex);
 
 /// Called when a drag operation is cancelled
 typedef BoardDragCancelCallback = void Function(int listIndex, int itemIndex);
 
 /// Called when an item is moved within the same list
-typedef BoardItemReorderCallback = void Function(int listIndex, int fromIndex, int toIndex);
+typedef BoardItemReorderCallback = void Function(
+    int listIndex, int fromIndex, int toIndex);
 
 /// Called when an item is moved to a different list
-typedef BoardItemMoveCallback = void Function(int fromListIndex, int fromItemIndex, int toListIndex, int toItemIndex);
+typedef BoardItemMoveCallback = void Function(
+    int fromListIndex, int fromItemIndex, int toListIndex, int toItemIndex);
 
 /// Called when a list is reordered
 typedef BoardListReorderCallback = void Function(int fromIndex, int toIndex);
 
 /// Called when a list scroll position changes
-typedef BoardListScrollCallback = void Function(int listIndex, double position, double maxExtent);
+typedef BoardListScrollCallback = void Function(
+    int listIndex, double position, double maxExtent);
 
 /// Called when a list starts or stops scrolling
-typedef BoardListScrollStateCallback = void Function(int listIndex, bool isScrolling);
+typedef BoardListScrollStateCallback = void Function(
+    int listIndex, bool isScrolling);
 
 /// Called when an item becomes visible or hidden in a list
-typedef BoardItemVisibilityCallback = void Function(int listIndex, int itemIndex, bool isVisible);
+typedef BoardItemVisibilityCallback = void Function(
+    int listIndex, int itemIndex, bool isVisible);
 
 /// Called when the board layout changes (e.g., orientation, size)
 typedef BoardLayoutChangeCallback = void Function(Size boardSize);
 
 /// Called when an error occurs during board operations
-typedef BoardErrorCallback = void Function(String error, StackTrace? stackTrace);
+typedef BoardErrorCallback = void Function(
+    String error, StackTrace? stackTrace);
 
 /// Called when the board controller is attached or detached
 typedef BoardControllerStateCallback = void Function(bool isAttached);
@@ -54,20 +62,21 @@ typedef BoardAnimationCallback = void Function(bool isAnimating);
 typedef BoardSelectionModeCallback = void Function(bool isSelecting);
 
 /// Called when items are selected or deselected
-typedef BoardSelectionCallback = void Function(List<BoardItemSelection> selectedItems);
+typedef BoardSelectionCallback = void Function(
+    List<BoardItemSelection> selectedItems);
 
 /// Represents a selected item
 class BoardItemSelection {
   final int listIndex;
   final int itemIndex;
   final Widget item;
-  
+
   const BoardItemSelection({
     required this.listIndex,
     required this.itemIndex,
     required this.item,
   });
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -75,12 +84,13 @@ class BoardItemSelection {
         other.listIndex == listIndex &&
         other.itemIndex == itemIndex;
   }
-  
+
   @override
   int get hashCode => listIndex.hashCode ^ itemIndex.hashCode;
-  
+
   @override
-  String toString() => 'BoardItemSelection(listIndex: $listIndex, itemIndex: $itemIndex)';
+  String toString() =>
+      'BoardItemSelection(listIndex: $listIndex, itemIndex: $itemIndex)';
 }
 
 /// Container for all board callbacks
@@ -100,7 +110,7 @@ class BoardCallbacks {
   final BoardAnimationCallback? onAnimationStateChanged;
   final BoardSelectionModeCallback? onSelectionModeChanged;
   final BoardSelectionCallback? onSelectionChanged;
-  
+
   const BoardCallbacks({
     this.onScroll,
     this.onListVisibilityChanged,
@@ -118,7 +128,7 @@ class BoardCallbacks {
     this.onSelectionModeChanged,
     this.onSelectionChanged,
   });
-  
+
   /// Creates a copy of this callbacks object with some values replaced
   BoardCallbacks copyWith({
     BoardScrollCallback? onScroll,
@@ -139,7 +149,8 @@ class BoardCallbacks {
   }) {
     return BoardCallbacks(
       onScroll: onScroll ?? this.onScroll,
-      onListVisibilityChanged: onListVisibilityChanged ?? this.onListVisibilityChanged,
+      onListVisibilityChanged:
+          onListVisibilityChanged ?? this.onListVisibilityChanged,
       onScrollStateChanged: onScrollStateChanged ?? this.onScrollStateChanged,
       onDragStart: onDragStart ?? this.onDragStart,
       onDragEnd: onDragEnd ?? this.onDragEnd,
@@ -149,9 +160,12 @@ class BoardCallbacks {
       onListReorder: onListReorder ?? this.onListReorder,
       onLayoutChange: onLayoutChange ?? this.onLayoutChange,
       onError: onError ?? this.onError,
-      onControllerStateChanged: onControllerStateChanged ?? this.onControllerStateChanged,
-      onAnimationStateChanged: onAnimationStateChanged ?? this.onAnimationStateChanged,
-      onSelectionModeChanged: onSelectionModeChanged ?? this.onSelectionModeChanged,
+      onControllerStateChanged:
+          onControllerStateChanged ?? this.onControllerStateChanged,
+      onAnimationStateChanged:
+          onAnimationStateChanged ?? this.onAnimationStateChanged,
+      onSelectionModeChanged:
+          onSelectionModeChanged ?? this.onSelectionModeChanged,
       onSelectionChanged: onSelectionChanged ?? this.onSelectionChanged,
     );
   }
@@ -163,14 +177,14 @@ class BoardListCallbacks {
   final BoardListScrollStateCallback? onScrollStateChanged;
   final BoardItemVisibilityCallback? onItemVisibilityChanged;
   final BoardErrorCallback? onError;
-  
+
   const BoardListCallbacks({
     this.onScroll,
     this.onScrollStateChanged,
     this.onItemVisibilityChanged,
     this.onError,
   });
-  
+
   /// Creates a copy of this callbacks object with some values replaced
   BoardListCallbacks copyWith({
     BoardListScrollCallback? onScroll,
@@ -181,7 +195,8 @@ class BoardListCallbacks {
     return BoardListCallbacks(
       onScroll: onScroll ?? this.onScroll,
       onScrollStateChanged: onScrollStateChanged ?? this.onScrollStateChanged,
-      onItemVisibilityChanged: onItemVisibilityChanged ?? this.onItemVisibilityChanged,
+      onItemVisibilityChanged:
+          onItemVisibilityChanged ?? this.onItemVisibilityChanged,
       onError: onError ?? this.onError,
     );
   }
