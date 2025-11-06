@@ -15,10 +15,26 @@ class BoardViewExample extends StatefulWidget {
 }
 
 class BoardViewExampleState extends State<BoardViewExample> {
+  // Create separate scroll controllers for each list
+  late List<ScrollController> _listScrollControllers;
+  bool _isSyncing = false;
+
   final List<BoardListObject> _listData = [
     BoardListObject(
       title: 'To Do',
       items: [
+        BoardItemObject(title: 'Task 1'),
+        BoardItemObject(title: 'Task 2'),
+        BoardItemObject(title: 'Task 3'),
+        BoardItemObject(title: 'Task 1'),
+        BoardItemObject(title: 'Task 2'),
+        BoardItemObject(title: 'Task 3'),
+        BoardItemObject(title: 'Task 1'),
+        BoardItemObject(title: 'Task 2'),
+        BoardItemObject(title: 'Task 3'),
+        BoardItemObject(title: 'Task 1'),
+        BoardItemObject(title: 'Task 2'),
+        BoardItemObject(title: 'Task 3'),
         BoardItemObject(title: 'Task 1'),
         BoardItemObject(title: 'Task 2'),
         BoardItemObject(title: 'Task 3'),
@@ -29,11 +45,41 @@ class BoardViewExampleState extends State<BoardViewExample> {
       items: [
         BoardItemObject(title: 'Task 4'),
         BoardItemObject(title: 'Task 5'),
+        BoardItemObject(title: 'Task 4'),
+        BoardItemObject(title: 'Task 5'),
+        BoardItemObject(title: 'Task 4'),
+        BoardItemObject(title: 'Task 5'),
+        BoardItemObject(title: 'Task 4'),
+        BoardItemObject(title: 'Task 5'),
+        BoardItemObject(title: 'Task 4'),
+        BoardItemObject(title: 'Task 5'),
+        BoardItemObject(title: 'Task 4'),
+        BoardItemObject(title: 'Task 5'),
       ],
     ),
     BoardListObject(
       title: 'Done',
       items: [
+        BoardItemObject(title: 'Task 6'),
+        BoardItemObject(title: 'Task 7'),
+        BoardItemObject(title: 'Task 8'),
+        BoardItemObject(title: 'Task 9'),
+        BoardItemObject(title: 'Task 6'),
+        BoardItemObject(title: 'Task 7'),
+        BoardItemObject(title: 'Task 8'),
+        BoardItemObject(title: 'Task 9'),
+        BoardItemObject(title: 'Task 6'),
+        BoardItemObject(title: 'Task 7'),
+        BoardItemObject(title: 'Task 8'),
+        BoardItemObject(title: 'Task 9'),
+        BoardItemObject(title: 'Task 6'),
+        BoardItemObject(title: 'Task 7'),
+        BoardItemObject(title: 'Task 8'),
+        BoardItemObject(title: 'Task 9'),
+        BoardItemObject(title: 'Task 6'),
+        BoardItemObject(title: 'Task 7'),
+        BoardItemObject(title: 'Task 8'),
+        BoardItemObject(title: 'Task 9'),
         BoardItemObject(title: 'Task 6'),
         BoardItemObject(title: 'Task 7'),
         BoardItemObject(title: 'Task 8'),
@@ -57,6 +103,36 @@ class BoardViewExampleState extends State<BoardViewExample> {
     super.initState();
     boardController.itemWidth = 300;
     _setupCallbacks();
+    _setupScrollControllers();
+  }
+
+  /// Sets up scroll controllers and syncs them together
+  void _setupScrollControllers() {
+    // Create one controller per list
+    _listScrollControllers = List.generate(
+      _listData.length,
+      (index) => ScrollController(),
+    );
+
+    // Add listeners to sync all scrolls
+    for (int i = 0; i < _listScrollControllers.length; i++) {
+      _listScrollControllers[i].addListener(() {
+        if (_isSyncing) return;
+
+        final offset = _listScrollControllers[i].offset;
+        _isSyncing = true;
+
+        try {
+          for (int j = 0; j < _listScrollControllers.length; j++) {
+            if (i != j && _listScrollControllers[j].hasClients) {
+              _listScrollControllers[j].jumpTo(offset);
+            }
+          }
+        } finally {
+          _isSyncing = false;
+        }
+      });
+    }
   }
 
   /// Sets up callbacks to demonstrate the functionality
@@ -138,12 +214,16 @@ class BoardViewExampleState extends State<BoardViewExample> {
   @override
   void dispose() {
     boardController.dispose();
+    for (var controller in _listScrollControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final lists = <BoardList>[];
+
     for (var i = 0; i < _listData.length; i++) {
       lists.add(_createBoardList(_listData[i]) as BoardList);
     }
@@ -246,6 +326,7 @@ class BoardViewExampleState extends State<BoardViewExample> {
             child: BoardView(
               lists: lists,
               boardController: boardController,
+              listScrollControllers: _listScrollControllers,
               width: MediaQuery.sizeOf(context).width * 0.3,
               scrollbar: true,
               listGap: 10,

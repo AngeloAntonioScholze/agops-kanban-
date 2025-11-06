@@ -24,6 +24,7 @@ class BoardView extends StatefulWidget {
     this.listGap = 0,
     this.decoration,
     this.boardPadding,
+    this.listScrollControllers,
   }) : super(key: key);
 
   final List<BoardList>? lists;
@@ -41,6 +42,7 @@ class BoardView extends StatefulWidget {
   final int dragDelay;
   final Function(bool)? itemInMiddleWidget;
   final OnDropBottomWidget? onDropItemInMiddleWidget;
+  final List<ScrollController>? listScrollControllers;
 
   @override
   State<StatefulWidget> createState() {
@@ -488,6 +490,10 @@ class BoardViewState extends State<BoardView>
             onTapList: widget.lists![index].onTapList,
             onStartDragList: widget.lists![index].onStartDragList,
             padding: widget.lists![index].padding,
+            scrollController: widget.listScrollControllers != null &&
+                    index < widget.listScrollControllers!.length
+                ? widget.listScrollControllers![index]
+                : null,
           );
         }
         if (widget.lists![index].index != index) {
@@ -504,6 +510,10 @@ class BoardViewState extends State<BoardView>
             onTapList: widget.lists![index].onTapList,
             onStartDragList: widget.lists![index].onStartDragList,
             padding: widget.lists![index].padding,
+            scrollController: widget.listScrollControllers != null &&
+                    index < widget.listScrollControllers!.length
+                ? widget.listScrollControllers![index]
+                : null,
           );
         }
 

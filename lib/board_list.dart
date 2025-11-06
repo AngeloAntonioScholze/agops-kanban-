@@ -20,6 +20,7 @@ class BoardList extends StatefulWidget {
   final OnStartDragList? onStartDragList;
   final bool draggable;
   final EdgeInsetsGeometry? padding;
+  final ScrollController? scrollController;
 
   const BoardList({
     Key? key,
@@ -35,6 +36,7 @@ class BoardList extends StatefulWidget {
     this.onTapList,
     this.onStartDragList,
     this.padding,
+    this.scrollController,
   }) : super(key: key);
 
   final int? index;
@@ -82,6 +84,10 @@ class BoardListState extends State<BoardList>
   @override
   void initState() {
     super.initState();
+    // Use external scroll controller if provided, otherwise create a new one
+    if (widget.scrollController != null) {
+      boardListController = widget.scrollController!;
+    }
     listController = BoardListController();
     listController.attachScrollController(boardListController);
   }
@@ -89,7 +95,10 @@ class BoardListState extends State<BoardList>
   @override
   void dispose() {
     listController.dispose();
-    boardListController.dispose();
+    // Only dispose the controller if we created it (not provided externally)
+    if (widget.scrollController == null) {
+      boardListController.dispose();
+    }
     super.dispose();
   }
 
